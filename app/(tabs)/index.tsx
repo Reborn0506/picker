@@ -1,74 +1,118 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+interface Signup {
+  Name: string;
+  Role: string;
 }
 
+export default function LoginScreen() {
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<Signup>();
+  const [loading, setLoading] = useState(false);
+  const onSubmit = (data: Signup) => {
+    console.log(data);}
+return (
+  <SafeAreaView style={styles.container}>
+      <View style={styles.form}>
+
+        <Controller
+          control={control}
+          name="Name"
+          rules={{
+            required: "Name is required"
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[styles.input, errors.Name && styles.errorInput]}
+              placeholder="Name"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}/>
+        
+          <Controller  
+          control ={control}
+          name="Role"
+            render={({field: {onChange, value}}) => {
+              return (
+                <RNPickerSelect
+                  onValueChange={onChange}
+                  items={[
+                    { label: "Team Lead", value: "Team Lead" },
+                    { label: "Project Manager", value: "Project Manager" },
+                    { label: "Software Developer", value: "Software Developer" },
+                    { label: "UI/UX Designer", value: "UI/UX Designer" },
+                  ]}
+                />
+              );
+            }}
+          />
+
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handleSubmit(onSubmit)}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>{loading ? "Loading..." : "Sign Up"}</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+
+
+)}
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 16,
+    backgroundColor: "#f5f5f5", 
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  form: {
+    marginBottom: 16,
+    alignItems: "center", 
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 25,
+    backgroundColor: "#caabdb",
+    padding: 26,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  input: {
+    height: 50,
+    width: "80%", 
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 25, 
+    paddingLeft: 16,
+    marginBottom: 20,
+    backgroundColor: "#fff", 
+    fontSize: 16,
   },
-});
+  errorInput: {
+    borderColor: "red", 
+  },
+  button: {
+    width: "80%", 
+    height: 50,
+    borderRadius: 25, 
+    backgroundColor: "#663399", 
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonDisabled: {
+    backgroundColor: "#b0c4de", 
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  error: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 12,
+  },
+})
