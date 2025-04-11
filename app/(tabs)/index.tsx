@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Signup {
   Name: string;
-  Role: string;
+  role: string;
 }
 
 export default function LoginScreen() {
@@ -35,24 +35,25 @@ return (
             />
           )}/>
         
-          <Controller  
-          control ={control}
-          name="Role"
-            render={({field: {onChange, value}}) => {
-              return (
-                <RNPickerSelect
-                  onValueChange={onChange}
-                  items={[
-                    { label: "Team Lead", value: "Team Lead" },
-                    { label: "Project Manager", value: "Project Manager" },
-                    { label: "Software Developer", value: "Software Developer" },
-                    { label: "UI/UX Designer", value: "UI/UX Designer" },
-                  ]}
-                />
-              );
-            }}
-          />
-
+    <Controller
+      control={control}
+      name="role"
+      render={({ field: { onChange, value } }) => (
+        <View style={styles.picker}>
+        <RNPickerSelect
+          onValueChange={(value) => onChange(value)}
+          placeholder={{ label: "Select a role", value: null }}
+          items={[
+            { label: 'Team Lead', value: 'Team Lead' },
+            { label: 'Project Manager', value: 'Project Manager' },
+            { label: 'Software Developer', value: 'Software Developer' },
+            { label: 'UI/UX Designer', value: 'UI/UX Designer' },
+          ]}
+          value={value}
+        />
+        </View>
+      )}
+    />
         <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={handleSubmit(onSubmit)}
@@ -91,6 +92,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: "#fff", 
     fontSize: 16,
+  },
+  picker: {
+    height: 50,
+    backgroundColor: '#f0f0f0',
+    width: "80%",
+    borderRadius: 25,
+    padding: 15,
+    marginBottom: 10,
   },
   errorInput: {
     borderColor: "red", 
